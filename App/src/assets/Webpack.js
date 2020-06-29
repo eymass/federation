@@ -3,6 +3,8 @@ import styled, { keyframes } from 'styled-components';
 import WebpackPng from './webpack.png';
 import BackPng from './back.png';
 
+const Form = React.lazy(() => import("RemoteForm/Form"));
+
 const rotate = keyframes`
     0%   { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -36,8 +38,9 @@ export default function Webpack() {
 
     return (
         <Page>
-            <WebpackLogo src={WebpackPng} />
-            <WebpackTitle>Webpack 5</WebpackTitle>
+            <React.Suspense fallback="Loading...">
+                <Form />
+            </React.Suspense>
         </Page>
     );
 }

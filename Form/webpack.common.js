@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
 
 const htmlConfig = {
@@ -16,7 +17,7 @@ const htmlConfig = {
 module.exports = {
         entry: './src/index.js',
         output: {
-            publicPath: '/',
+            publicPath: 'http://localhost:5200/',
             path: path.resolve(__dirname, 'dist')
         },
         module: {
@@ -41,6 +42,31 @@ module.exports = {
             ],
         },
         plugins: [
+            new ModuleFederationPlugin({
+                library: { type: "var", name: "FormApp" },
+                name: "FormApp",
+                filename: "remoteEntry.js",
+                exposes: {
+                    "./Form": "./src/Form"
+                },
+                remotes: {
+                    App: "App",
+                },
+                shared: {
+                    "@material-ui/core": {
+                        eager: true,
+                        singleton: true,
+                    },
+                    "react": {
+                        eager: true,
+                        singleton: true,
+                    },
+                    "react-dom": {
+                        eager: true,
+                        singleton: true,
+                    },
+                },
+            }),
             new CleanWebpackPlugin(),
             new HtmlWebpackPlugin(htmlConfig)
         ]
